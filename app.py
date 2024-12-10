@@ -14,11 +14,11 @@ import re
 app = Flask(__name__)
 
 # 必須放上自己的Channel Access Token
-line_bot_api = LineBotApi('QGU5wq+Dv1teu+3jMNAerFywoBd08JJwhZ3/2Gpbglnj60/q/hFMpVjxq0yySVe7xBPgZMwqPV9CEtSAqbofjJWgC9iNfln30YfLzr1XQ47pQBJH2TUsX5CGDT4pZIA2rZkTPUhANDPujZDKoqBYwwdB04t89/1O/w1cDnyilFU=')
+line_bot_api = LineBotApi('U1krj+SC16XZkoxdKLurCY+us6qQdiu1Aq2LH9XoNKF7ofE+2BnB6cNyfm+37fCiibrIiJ2ZR1FuJWM56mws7NKllwAjN7wzRKZULvARUGdXz5hLOr6oHXZsDoy5ShCPXt40iGkcNG8dFrAj1rD7CwdB04t89/1O/w1cDnyilFU=')
 # 必須放上自己的Channel Secret
-handler = WebhookHandler('dfe13d92b7d94bcd5ce29a07d85641d1')
+handler = WebhookHandler('338d1b5254b11e24d39b49eaa2270eaf')
 
-line_bot_api.push_message('U367c14746ad6c3b1912419dbb5030c44', TextSendMessage(text='你可以開始了'))
+line_bot_api.push_message('U5c0c7bb08fa0195a176f3b1e610c1f35', TextSendMessage(text='你可以開始了'))
 
 # 監聽所有來自 /callback 的 Post Request
 @app.route("/callback", methods=['POST'])
@@ -44,11 +44,30 @@ def callback():
 def handle_message(event):
     message = text=event.message.text
     if re.match('告訴我秘密',message):
-        audio_message = AudioSendMessage(
-            original_content_url='https://campus-studio.com/download/twsong.mp3',
-            duration=81000
+        buttons_template_message = TemplateSendMessage(
+        alt_text='這是樣板傳送訊息',
+        template=ButtonsTemplate(
+            thumbnail_image_url='https://i.imgur.com/kNBl363.jpg',
+            title='中華民國',
+            text='選單功能－TemplateSendMessage',
+            actions=[
+                PostbackAction(
+                    label='這是PostbackAction',
+                    display_text='顯示文字',
+                    data='實際資料'
+                ),
+                MessageAction(
+                    label='這是MessageAction',
+                    text='實際資料'
+                ),
+                URIAction(
+                    label='這是URIAction',
+                    uri='https://en.wikipedia.org/wiki/Taiwan'
+                )
+            ]
         )
-        line_bot_api.reply_message(event.reply_token, audio_message)
+    )
+        line_bot_api.reply_message(event.reply_token, buttons_template_message)
     else:
         line_bot_api.reply_message(event.reply_token, TextSendMessage(message))
 #主程式
